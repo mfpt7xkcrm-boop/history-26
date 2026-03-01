@@ -2,221 +2,220 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>日中戦争〜第二次世界大戦クイズ</title>
+<title>日中戦争〜第二次世界大戦 難問モード</title>
+
 <style>
 body{
-  font-family: "Hiragino Maru Gothic ProN","Meiryo",sans-serif;
-  background:#f4f9ff;
-  text-align:center;
-  padding:20px;
+font-family:sans-serif;
+text-align:center;
+background:#f7f9fc;
 }
 
 h1{
-  color:#2c3e50;
+margin-top:40px;
+color:#555;
+}
+
+.section{
+color:#888;
+margin-bottom:10px;
+font-weight:bold;
+}
+
+#timer{
+font-size:18px;
+margin:10px;
+color:#ff7b7b;
 }
 
 button{
-  padding:12px 20px;
-  margin:8px;
-  font-size:16px;
-  border:none;
-  border-radius:20px;
-  cursor:pointer;
-  transition:0.2s;
+padding:12px 25px;
+margin:10px;
+border:none;
+border-radius:12px;
+font-size:16px;
+cursor:pointer;
+background:#cde7ff;
+transition:0.2s;
 }
 
-.choice{
-  display:block;
-  width:70%;
-  margin:10px auto;
-  background:#d6eaff;
+button:hover{
+background:#a8d5ff;
 }
 
-.choice:hover{
-  background:#a8d8ff;
+input{
+padding:8px;
+font-size:16px;
+width:260px;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
-.correct{
-  background:#a8f0c6 !important;
-}
-
-.wrong{
-  background:#ffb3b3 !important;
-}
-
-#startBtn{
-  font-size:22px;
-  padding:18px 40px;
-  background:#ffcc70;
-}
-
-#nextBtn{
-  background:#ffd6e8;
+#quiz{
+display:none;
+margin-top:30px;
 }
 
 #result{
-  margin-top:20px;
-  font-size:18px;
+margin-top:20px;
+font-weight:bold;
+}
+
+#final{
+margin-top:30px;
 }
 </style>
 </head>
 <body>
 
 <h1>日中戦争〜第二次世界大戦 難問モード</h1>
+
 <button id="startBtn">スタート</button>
 
-<div id="quiz" style="display:none;">
-  <h2 id="sectionTitle"></h2>
-  <p id="question"></p>
-  <div id="choices"></div>
-  <div id="feedback"></div>
-  <button id="nextBtn" style="display:none;">次へ</button>
+<div id="quiz">
+<div class="section" id="section"></div>
+<div id="timer"></div>
+<p id="question"></p>
+<input type="text" id="answerInput">
+<br>
+<button id="submitBtn">回答</button>
+<div id="result"></div>
 </div>
 
-<div id="result"></div>
+<div id="final"></div>
 
 <script>
-const quizData = [
-{
-title:"セクション1 日中戦争",
-questions:[
-{q:"日中戦争の発端となった事件は？",
-a:"盧溝橋事件",
-choices:["柳条湖事件","西安事件","盧溝橋事件","満州事変"]},
-{q:"1937年12月に日本が占領した都市は？",
-a:"南京",
-choices:["上海","南京","北京","重慶"]},
-{q:"この頃の中国国民政府代表は？",
-a:"蒋介石",
-choices:["毛沢東","蒋介石","張学良","汪兆銘"]},
-{q:"中国共産党の代表は？",
-a:"毛沢東",
-choices:["周恩来","蒋介石","毛沢東","孫文"]},
-{q:"第二次国共合作のきっかけとなった事件は？",
-a:"西安事件",
-choices:["柳条湖事件","西安事件","盧溝橋事件","華北分離工作"]},
-{q:"南京陥落後、中国政府が移転した都市は？",
-a:"重慶",
-choices:["広州","武漢","重慶","天津"]}
-]},
-{
-title:"セクション2 内閣の対応",
-questions:[
-{q:"1938年1月の『中国国民政府を相手にしない』声明は？",
-a:"第一次近衛声明",
-choices:["第一次近衛声明","第二次近衛声明","国家総動員法","第三次近衛声明"]},
-{q:"戦争に国全体で参加する法律は？",
-a:"国家総動員法",
-choices:["治安維持法","国家総動員法","軍部大臣現役武官制","五か年計画"]},
-{q:"東亜新秩序建設を掲げた声明は？",
-a:"第二次近衛声明",
-choices:["第一次近衛声明","第二次近衛声明","第三次近衛声明","日満議定書"]},
-{q:"新国民政府を南京に樹立した人物は？",
-a:"江兆銘",
-choices:["蒋介石","毛沢東","江兆銘","張学良"]}
-]},
-{
-title:"セクション3 ソ連への対応",
-questions:[
-{q:"満州国境で日本が大敗した事件は？",
-a:"張鼓峰事件",
-choices:["ノモンハン事件","張鼓峰事件","柳条湖事件","盧溝橋事件"]},
-{q:"満蒙国境での衝突で同じく大敗した事件は？",
-a:"ノモンハン事件",
-choices:["張鼓峰事件","華北分離工作","ノモンハン事件","西安事件"]},
-{q:"1939年締結の独ソ間の条約は？",
-a:"独ソ不可侵条約",
-choices:["日ソ中立条約","独伊同盟","独ソ不可侵条約","三国同盟"]},
-{q:"1941年締結の日ソ間の条約は？",
-a:"日ソ中立条約",
-choices:["日独伊三国同盟","独ソ不可侵条約","日ソ中立条約","ポーツマス条約"]}
-]},
-{
-title:"セクション4 第二次世界大戦",
-questions:[
-{q:"ドイツが侵攻した国は？",
-a:"ポーランド",
-choices:["フランス","ポーランド","ベルギー","チェコスロバキア"]},
-{q:"この侵攻をきっかけに始まった戦争は？",
-a:"第二次世界大戦",
-choices:["第一次世界大戦","日露戦争","第二次世界大戦","冷戦"]},
-{q:"日本が断とうとした中国への支援ルートは？",
-a:"援蒋ルート",
-choices:["シベリア鉄道","援蒋ルート","満州鉄道","東清鉄道"]}
-]}
+
+const questions = [
+
+{section:"セクション1 日中戦争",question:"日中戦争が起こった理由となる事件は？",answers:["盧溝橋事件","ろこうきょう事件"]},
+{section:"セクション1 日中戦争",question:"日本が12月に占領した土地は？",answers:["南京"]},
+{section:"セクション1 日中戦争",question:"中国国民政府の代表は？",answers:["蒋介石","しょうかいせき"]},
+{section:"セクション1 日中戦争",question:"中国共産党の代表は？",answers:["毛沢東","もうたくとう"]},
+{section:"セクション1 日中戦争",question:"3と4の不仲を解決した人物は？",answers:["張学良","ちょうがくりょう"]},
+{section:"セクション1 日中戦争",question:"共同戦線化のきっかけは？",answers:["西安事件","しーあん事件"]},
+{section:"セクション1 日中戦争",question:"できた戦線は？",answers:["抗日民族統一戦線"]},
+{section:"セクション1 日中戦争",question:"毛沢東と蒋介石が手を握ったことは？",answers:["第二次国共合作","第2次国共合作"]},
+{section:"セクション1 日中戦争",question:"中国が拠点を移した場所は？",answers:["重慶","じゅうけい"]},
+
+{section:"セクション2 内閣の対応",question:"『中国国民政府とは相手にしない』声明は？",answers:["第一次近衛声明","第1次近衛声明"]},
+{section:"セクション2 内閣の対応",question:"戦争に国全体で参加する法律は？",answers:["国家総動員法"]},
+{section:"セクション2 内閣の対応",question:"『東亜新秩序の建設』声明は？",answers:["第二次近衛声明","第2次近衛声明"]},
+{section:"セクション2 内閣の対応",question:"対日和平論に傾いていた人物は？",answers:["江兆銘","こうちょうみん"]},
+{section:"セクション2 内閣の対応",question:"近衛三大原則の声明は？",answers:["第三次近衛声明","第3次近衛声明"]},
+{section:"セクション2 内閣の対応",question:"新国民政府を樹立させた場所は？",answers:["南京"]},
+
+{section:"セクション3 ソ連への対応",question:"満州国境で日本が大敗した事件は？",answers:["張鼓峰事件","ちょうこほう事件"]},
+{section:"セクション3 ソ連への対応",question:"蒙古国境で日本が大敗した事件は？",answers:["ノモンハン事件"]},
+{section:"セクション3 ソ連への対応",question:"ドイツとソ連が結んだ条約は？",answers:["独ソ不可侵条約"]},
+{section:"セクション3 ソ連への対応",question:"日本とソ連が結んだ条約は？",answers:["日ソ中立条約"]},
+
+{section:"セクション4 WWⅡのはじまり",question:"ドイツが侵攻した国は？",answers:["ポーランド"]},
+{section:"セクション4 WWⅡのはじまり",question:"宣戦布告で始まった戦争は？",answers:["第二次世界大戦","第2次世界大戦"]},
+{section:"セクション4 WWⅡのはじまり",question:"日本が断ちたかったルートは？",answers:["援蒋ルート","えんしょうルート"]}
+
 ];
 
-let currentSection=0;
-let currentQuestion=0;
-let wrongAnswers=[];
+let current=0;
+let score=0;
+let timer;
+let timeLeft=10;
+let mistakes=[];
 
-document.getElementById("startBtn").onclick=function(){
-this.style.display="none";
-document.getElementById("quiz").style.display="block";
+const startBtn=document.getElementById("startBtn");
+const quiz=document.getElementById("quiz");
+const sectionEl=document.getElementById("section");
+const questionEl=document.getElementById("question");
+const answerInput=document.getElementById("answerInput");
+const resultEl=document.getElementById("result");
+const timerEl=document.getElementById("timer");
+const finalEl=document.getElementById("final");
+
+startBtn.onclick=function(){
+startBtn.style.display="none";
+quiz.style.display="block";
 loadQuestion();
+};
+
+document.getElementById("submitBtn").onclick=function(){
+handleAnswer();
 };
 
 function loadQuestion(){
-let section=quizData[currentSection];
-let questionObj=section.questions[currentQuestion];
-document.getElementById("sectionTitle").textContent=section.title;
-document.getElementById("question").textContent=questionObj.q;
-document.getElementById("feedback").innerHTML="";
-document.getElementById("nextBtn").style.display="none";
+clearInterval(timer);
+timeLeft=10;
+timerEl.textContent="残り "+timeLeft+" 秒";
 
-let choicesDiv=document.getElementById("choices");
-choicesDiv.innerHTML="";
-
-questionObj.choices.forEach(choice=>{
-let btn=document.createElement("button");
-btn.textContent=choice;
-btn.className="choice";
-btn.onclick=function(){
-if(choice===questionObj.a){
-btn.classList.add("correct");
-}else{
-btn.classList.add("wrong");
-document.getElementById("feedback").innerHTML=
-"<p>正解: "+questionObj.a+"</p>";
-wrongAnswers.push(questionObj.q+" → "+questionObj.a);
+timer=setInterval(function(){
+timeLeft--;
+timerEl.textContent="残り "+timeLeft+" 秒";
+if(timeLeft<=0){
+clearInterval(timer);
+handleAnswer(true);
 }
-Array.from(document.getElementsByClassName("choice"))
-.forEach(b=>b.disabled=true);
-document.getElementById("nextBtn").style.display="inline-block";
-};
-choicesDiv.appendChild(btn);
+},1000);
+
+let q=questions[current];
+sectionEl.textContent=q.section;
+questionEl.textContent=q.question;
+answerInput.value="";
+resultEl.textContent="";
+answerInput.disabled=false;
+}
+
+function handleAnswer(timeout=false){
+clearInterval(timer);
+answerInput.disabled=true;
+
+let userAnswer=answerInput.value.trim();
+let correctAnswers=questions[current].answers;
+
+let correct=false;
+for(let i=0;i<correctAnswers.length;i++){
+if(userAnswer===correctAnswers[i]){
+correct=true;
+break;
+}
+}
+
+if(correct){
+score++;
+resultEl.textContent="正解！";
+}else{
+resultEl.textContent="不正解… 正解は "+correctAnswers[0];
+mistakes.push({
+question:questions[current].question,
+correct:correctAnswers[0]
 });
 }
 
-document.getElementById("nextBtn").onclick=function(){
-currentQuestion++;
-if(currentQuestion>=quizData[currentSection].questions.length){
-currentSection++;
-currentQuestion=0;
-if(currentSection>=quizData.length){
-showResult();
-return;
-}
-}
+current++;
+
+setTimeout(function(){
+if(current<questions.length){
 loadQuestion();
-};
-
-function showResult(){
-document.getElementById("quiz").style.display="none";
-let result=document.getElementById("result");
-result.innerHTML="<h2>終了！</h2>";
-if(wrongAnswers.length===0){
-result.innerHTML+="<p>全問正解！すごい！</p>";
 }else{
-result.innerHTML+="<h3>復習しよう👇</h3>";
-wrongAnswers.forEach(w=>{
-result.innerHTML+="<p>"+w+"</p>";
+showFinal();
+}
+},1000);
+}
+
+function showFinal(){
+quiz.style.display="none";
+
+let html="<h2>終了！</h2>";
+html+="<p>スコア: "+score+" / "+questions.length+"</p>";
+
+if(mistakes.length>0){
+html+="<h3>ミスした問題</h3>";
+mistakes.forEach(function(m){
+html+="<p>"+m.question+"<br>→ "+m.correct+"</p>";
 });
 }
-}
-</script>
 
+finalEl.innerHTML=html;
+}
+
+</script>
 </body>
 </html>
-
-
